@@ -4,13 +4,13 @@
 let listaAmigos = [];
 //Creamos la variable para tomar el valor de entrada
 const inputAmigo = document.getElementById("amigo");
+//Lista que muestra a las persona en la lista
+const listaMostrada = document.getElementById("listaAmigos");
+const amigoMostrado = document.getElementById("resultado");
+const error = document.getElementById("error");
 
-//Funcion para agregar texto a un elemento HTML
-function asignarTextoElemento(elemento, texto){
-    let elementoHTML = document.getElementById(elemento);
-    elementoHTML.innerHTML = texto;
-    return;
-}//asignarTextoElemento
+//Bool para verificar si es el ultimo amigo
+let isLast = false;
 
 function validarNombre(){
     //Utilizamos una expresion regular para validar el nombre ingresado
@@ -24,55 +24,104 @@ function validarNombre(){
     return false;
 }//validarNombre
 
+function mostrarLista(listaAmigos){
+    //Limpiamos la lista
+    listaMostrada.innerHTML="";
+    //Mostramos la lista en pantalla
+    for(let i = 0; i<listaAmigos.length; i++){
+        //Creamos el elemento
+        const elemento = listaAmigos[i];
+        //Insertamos el el elemento
+        listaMostrada.insertAdjacentHTML("beforeend",
+            `
+            <li>${elemento}</li>
+            `
+        );
+    }//for
+}//mostrarLista
+
+function mostrarAmigo(texto){
+    //Limpiamos la lista mostrada en pantalla
+    listaMostrada.innerHTML="";
+    //Limpiamos el amigo secreto mostrado en pantalla
+    amigoMostrado.innerHTML="";
+    amigoMostrado.insertAdjacentHTML("beforeend",
+        `
+        <li>${texto}</li>
+        `
+    );
+}//mostrarAmigo
+
+function mostrarError(texto){
+    error.innerHTML="";
+    error.insertAdjacentHTML("beforeend",
+        `
+        <li>${texto}</li>
+        `
+    );
+}//mostrarError
+
 function agregarAmigo(){
+    amigoMostrado.innerHTML="";
+    error.innerHTML="";
     //Hacemos uso de la funcion validar nombre
     if(validarNombre()){
-        console.log(`${inputAmigo.value} agregado a la lista`);
+        //console.log(`${inputAmigo.value} agregado a la lista`);
         //Agregamos a la lista el amigo ingresado
         listaAmigos.push(inputAmigo.value);
-        console.log(listaAmigos);
+        //Mostramos la lista en la pagina
+        mostrarLista(listaAmigos);
         //Limpiamos la caja de entrada
         condicionesIniciales();
     }else{
-        console.log("Ingresado un nombre válido");
+        //console.log("Ingresa un nombre válido");
+        mostrarError("Ingresa un nombre válido");
     }//else
 }//agregarAmigo
 
 function eliminarAmigo(listaAmigos, amigoSorteado){
     //Eliminamos el amigo de la lista
     listaAmigos = listaAmigos.filter(amigo => amigo !== amigoSorteado);
-    console.log(`La nueva lista de amigos es ${listaAmigos}`);
+    //console.log(`La nueva lista de amigos es ${listaAmigos}`);
     //retornamos la nueva lista
     return listaAmigos;
 }//eliminarAmigos
 
 function sortearAmigo(){
-    //Verificamos que la lista sea mayor a dos personas
-    if(listaAmigos.length >= 2){
+    //Verificamos que la lista sea mayor a una persona
+    if(listaAmigos.length > 1){
 
         //Sorteamos la posicion de un amigo al azar
         let amigoSorteado = Math.floor(Math.random()*listaAmigos.length);
-        console.log(`El amigo sorteado en ${listaAmigos} es ${listaAmigos[amigoSorteado]}`);
+        let amigo = listaAmigos[amigoSorteado];
+        //console.log(`El amigo sorteado en ${listaAmigos} es ${amigo}`);
 
-        //Verificamos si el amigo se encuentra en la lista
-        if(listaAmigos.includes(listaAmigos[amigoSorteado])){
-            console.log(`${listaAmigos[amigoSorteado]} ya se sorteó`);
-            //Si se encuentra en la lista, lo eliminamos y creamos una nueva lista
-            let nuevaLista = eliminarAmigo(listaAmigos, listaAmigos[amigoSorteado]);
-            //Asigamos la lista de amigos la lista actualizada con el amigo eliminado
-            listaAmigos = nuevaLista;
+        //Mostramos al amigo sorteado en pantalla
+        mostrarAmigo(`El amigo secreto sorteado es: ${amigo}`);
 
-            if(nuevaLista.length === 1){
-                //Si nuestra nueva lista solo contiene un amigo significa que todos los amigos ya han sido sorteados
-                console.log(`Todos los amigos ya han sido sorteados, el ultimo es ${nuevaLista[0]}`);
-            }//if
+        //Eliminamos el amigo sorteado de la lista
+        listaAmigos = eliminarAmigo(listaAmigos, amigo);
+
+        if(listaAmigos.length === 1){
+            //Si la lista solo tiene un amigo, es el ultimo
+            isLast = true;
         }//if
+
+    }else if(listaAmigos.length === 1 && isLast){
+        let ultimoAmigo = listaAmigos[0];
+        //Si nuestra nueva lista solo contiene un amigo significa que todos los amigos ya han sido sorteados
+        //console.log(`Todos los amigos ya han sido sorteados, el ultimo es ${ultimoAmigo}`);
+        mostrarAmigo(`El ultimo amigo secreto sorteado es: ${ultimoAmigo}`);
     }else{
-        console.log("Para sortear se necesita una lista mayor a dos personas.");
+        //console.log("Para sortear se necesita una lista mayor a dos personas.");
+        mostrarError("Se necesitan mas de 2 amigos para sortear.");
     }//else
+
 }//sortearAmigo
 
 function condicionesIniciales(){
-    //Limpiamos el valor de la caja de entrada
+    //Limpiamos los valores
     inputAmigo.value= "";
+    amigoMostrado.value="";
+    error.innerHTML="";
 }//condicionesIniciales
