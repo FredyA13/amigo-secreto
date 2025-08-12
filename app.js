@@ -114,7 +114,7 @@ function sortearAmigo(){
         mostrarAmigo(`El ultimo amigo secreto sorteado es: ${ultimoAmigo}`);
     }else{
         //console.log("Para sortear se necesita una lista mayor a dos personas.");
-        mostrarError("Se necesitan mas de 2 amigos para sortear.");
+        mostrarError("Se necesitan al menos 2 amigos para sortear.");
     }//else
 
 }//sortearAmigo
